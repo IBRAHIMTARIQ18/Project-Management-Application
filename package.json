@@ -1,0 +1,19 @@
+{
+  "name": "project-management-application",
+  "version": "1.0.0",
+  "description": "A project management application",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [
+    "project",
+    "management"
+  ],
+  "author": "Ibrahim Tariq",
+  "license": "ISC",
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}
