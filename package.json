@@ -19,8 +19,12 @@
     "prettier": "3.6.2"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mailgen": "^2.0.29",
+    "mongoose": "^8.17.2"
   }
 }
