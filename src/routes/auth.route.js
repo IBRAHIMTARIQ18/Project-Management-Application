@@ -5,7 +5,10 @@ import {
   registerUser,
 } from "../controllers/auth.controller.js";
 import { validate } from "../middlewares/validator.middleware.js";
-import { userRegisterValidator } from "../validators/index.js";
+import {
+  userRegisterValidator,
+  userLoginValidator,
+} from "../validators/index.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const router = Router();
