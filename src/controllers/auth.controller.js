@@ -30,6 +30,7 @@ const generateAccessTokenAndRefreshToken = async (userId) => {
   }
 };
 
+// Register new user
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, role, password } = req.body;
 
@@ -85,6 +86,7 @@ const registerUser = asyncHandler(async (req, res) => {
     );
 });
 
+// Login user
 const login = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -129,6 +131,7 @@ const login = asyncHandler(async (req, res) => {
     );
 });
 
+// Logout user (secured)
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
@@ -326,6 +329,57 @@ const forgotPasswordRequest = asyncHandler(async (req, res) => {
     );
 });
 
+// Reset Password
+const resetForgotPassword = asyncHandler(async (req, res) => {
+  const { resetToken } = req.params;
+  const { newPassword } = req.body;
+
+  const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  const user = await User.findOne({
+    forgotPasswordToken: hashedToken,
+    forgotPasswordTokenExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new ApiError(489, "Invalid or expired password reset token");
+  }
+
+  user.forgotPasswordToken = undefined;
+  user.forgotPasswordTokenExpiry = undefined;
+
+  user.password = newPassword;
+
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password has been reset successfully"));
+});
+
+// Change current password (secured)
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  const user = await User.findById(req.user?._id);
+
+  const isPasswordValid = await user.isPasswordMatch(currentPassword);
+
+  if (!isPasswordValid) {
+    throw new ApiError(400, "Current password is incorrect");
+  }
+
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
 export {
   registerUser,
   login,
@@ -335,4 +389,6 @@ export {
   resendEmailVerification,
   refreshAccessToken,
   forgotPasswordRequest,
+  resetForgotPassword,
+  changeCurrentPassword,
 };
